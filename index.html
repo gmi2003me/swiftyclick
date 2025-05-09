@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Clicker Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="welcome-screen" class="screen active">
+        <h1>SwiftyClick</h1>
+        <p>Test how quickly you can click your mouse button or keyboard!</p>
+        <p>The game will measure your clicks per second (CPS) over a 10-second period.</p>
+        <p>Click the bullseye in the center of the screen as fast as you can.</p>
+        <p>You can also use the "w" key or up arrow.</p>
+        <!-- <button id="start-button">Click here to start</button> -->
+        <div id="mode-selection-buttons">
+            <button id="one-player-button" class="mode-button">1 Player Game</button>
+            <button id="two-player-button" class="mode-button">2 Player Game</button>
+        </div>
+    </div>
+
+    <div id="game-screen" class="screen">
+        <div id="game-areas-container">
+            <!-- Player 1 Area -->
+            <div id="player1-area" class="player-area">
+                <h2>Player 1</h2>
+                <div id="timer-display-p1" class="timer-display">10</div>
+                <div id="click-zone-p1" class="click-zone">
+                    <div class="bullseye-ring"></div>
+                    <div class="bullseye-ring"></div>
+                    <div class="bullseye-dot"></div>
+                </div>
+                <p>Clicks: <span id="click-count-p1">0</span></p>
+                <div id="cps-gauge-container-p1" class="cps-gauge-container">
+                    <div class="gauge-labels">
+                        <span class="gauge-label-low">LOW</span>
+                        <span class="gauge-label-high">HIGH</span>
+                    </div>
+                    <div id="cps-gauge-p1" class="cps-gauge">
+                        <div id="cps-gauge-needle-p1" class="cps-gauge-needle"></div>
+                        <div id="cps-gauge-hub-p1" class="cps-gauge-hub"></div>
+                    </div>
+                    <div id="cps-gauge-value-p1" class="cps-gauge-value">0 CPS</div>
+                </div>
+            </div>
+
+            <!-- Player 2 Area (Initially hidden for 1P mode) -->
+            <div id="player2-area" class="player-area" style="display: none;">
+                <h2>Player 2</h2>
+                <div id="timer-display-p2" class="timer-display">10</div>
+                <div id="click-zone-p2" class="click-zone">
+                    <div class="bullseye-ring"></div>
+                    <div class="bullseye-ring"></div>
+                    <div class="bullseye-dot"></div>
+                </div>
+                <p>Clicks: <span id="click-count-p2">0</span></p>
+                <div id="cps-gauge-container-p2" class="cps-gauge-container">
+                    <div class="gauge-labels">
+                        <span class="gauge-label-low">LOW</span>
+                        <span class="gauge-label-high">HIGH</span>
+                    </div>
+                    <div id="cps-gauge-p2" class="cps-gauge">
+                        <div id="cps-gauge-needle-p2" class="cps-gauge-needle"></div>
+                        <div id="cps-gauge-hub-p2" class="cps-gauge-hub"></div>
+                    </div>
+                    <div id="cps-gauge-value-p2" class="cps-gauge-value">0 CPS</div>
+                </div>
+            </div>
+        </div>
+        <div id="race-track-container" style="display: none;"> <!-- Hidden by default, shown for 2P mode -->
+            <div id="track">
+                <div id="horse-p1" class="horse"><span class="jockey-number">1</span></div>
+                <div id="horse-p2" class="horse"><span class="jockey-number">2</span></div>
+                <div id="finish-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="summary-screen" class="screen">
+        <h1>Game Over!</h1>
+        <div id="summary-results">
+            <!-- Results will be populated by JavaScript -->
+        </div>
+        <p id="winner-message"></p>
+        <button id="play-again-button">Play again</button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

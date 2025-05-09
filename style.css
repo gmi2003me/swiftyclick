@@ -1,0 +1,406 @@
+body {
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+    text-align: center;
+}
+
+.screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.screen.active {
+    display: flex;
+}
+
+h1 {
+    margin-top: 0;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    margin-top: 20px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#game-screen {
+    position: relative;
+    /* Adjust width for two players potentially */
+    /* max-width: 800px; /* Example: if player areas are ~350px each + spacing */
+}
+
+#timer-display {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Target / Bullseye Styles for Click Zones */
+.click-zone {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: #ff4136; /* Red base */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative; /* Needed for absolute positioning of inner rings/dot */
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+.bullseye-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 5px solid white; /* White rings */
+    box-sizing: border-box; /* Ensures border is within width/height */
+}
+
+.click-zone .bullseye-ring:nth-child(1) {
+    width: 100px; /* Outer ring */
+    height: 100px;
+}
+
+.click-zone .bullseye-ring:nth-child(2) {
+    width: 50px;  /* Inner ring */
+    height: 50px;
+}
+
+.bullseye-dot {
+    position: absolute;
+    width: 15px;  /* Center dot */
+    height: 15px;
+    background-color: white;
+    border-radius: 50%;
+}
+/* End Target / Bullseye Styles */
+
+#click-count {
+    font-size: 24px;
+    margin-top: 20px;
+}
+
+#summary-screen h1 {
+    color: #28a745;
+    margin-bottom: 15px;
+}
+
+#summary-results p {
+    font-size: 20px;
+    margin: 8px 0;
+}
+
+#summary-results span {
+    font-weight: bold;
+    color: #007bff;
+}
+
+#winner-message {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #ffc107; /* Gold-ish color for winner */
+}
+
+#cps-result {
+    font-size: 36px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.cps-gauge-container {
+    width: 220px;
+    height: 150px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    font-family: 'Arial', sans-serif;
+}
+
+.cps-gauge {
+    width: 200px;
+    height: 100px; /* Half of width for a semi-circle */
+    border-radius: 100px 100px 0 0; /* Makes it a semi-circle */
+    background-image: conic-gradient(
+        from -90deg at 50% 100%,
+        #32CD32 0deg,   #32CD32 36deg,    /* Lime Green segment (0-20%) */
+        #ADFF2F 36deg,  #ADFF2F 72deg,    /* GreenYellow segment (20-40%) */
+        #FFFF00 72deg,  #FFFF00 108deg,   /* Yellow segment (40-60%) */
+        #FFA500 108deg, #FFA500 144deg,   /* Orange segment (60-80%) */
+        #FF0000 144deg, #FF0000 180deg    /* Red segment (80-100%) */
+    );
+    position: relative;
+    overflow: hidden; /* Hide parts of needle that go outside */
+    border: 2px solid #bbb;
+}
+
+.cps-gauge-needle {
+    width: 3px; /* Needle thickness */
+    height: 90px; /* Needle length, slightly less than gauge radius */
+    background-color: #D32F2F; /* Darker Red for needle */
+    position: absolute;
+    bottom: 0px; /* Position at the bottom center of the gauge */
+    left: 50%;
+    transform-origin: 50% 100%; /* Rotate around its bottom center point */
+    transform: translateX(-50%) rotate(-90deg); /* Initial position (pointing left for 0 CPS) */
+    border-radius: 3px 3px 0 0; /* Rounded tip */
+    transition: transform 0.2s ease-out;
+    box-shadow: 0 0 3px rgba(0,0,0,0.7);
+    z-index: 5;
+}
+
+.cps-gauge-hub {
+    width: 16px;
+    height: 16px;
+    background-color: #424242; /* Dark grey hub */
+    border-radius: 50%;
+    position: absolute;
+    bottom: -1px; /* Adjust to align with gauge bottom edge visually */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 6; /* Above needle base */
+    border: 2px solid #212121; /* Darker border for hub */
+    box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+.cps-gauge-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 5px;
+}
+
+.gauge-labels {
+    width: 210px; /* Slightly wider than gauge for label placement */
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 2px;
+    padding: 0 5px; /* Add some padding so labels are not at the very edge */
+}
+
+.gauge-label-low {
+    text-align: left;
+}
+
+.gauge-label-high {
+    text-align: right;
+}
+
+.mode-button {
+    padding: 12px 25px;
+    font-size: 18px;
+    margin: 0 10px;
+}
+
+#mode-selection-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+#game-areas-container {
+    display: flex;
+    justify-content: space-around; /* Or space-between */
+    align-items: flex-start; /* Align items to the top */
+    width: 100%;
+    gap: 20px; /* Space between player areas */
+}
+
+.player-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    min-width: 320px; /* Minimum width for each player area */
+}
+
+.player-area h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.timer-display {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Hide Player 2 area by default if JS doesn't show it */
+/* #player2-area { display: none; } */ /* Handled by inline style for now, can be class-based */
+
+#race-track-container {
+    width: 90%; /* Or a fixed width like 700px */
+    max-width: 700px;
+    margin: 20px auto; /* Center it */
+    padding: 10px;
+    background-color: #f0f0f0; /* Light border/padding area around track */
+    border-radius: 5px;
+}
+
+#track {
+    width: 100%;
+    height: 120px; /* Adjust height as needed */
+    background-color: #6ABF69; /* Green track color */
+    position: relative;
+    border-radius: 3px;
+    overflow: hidden; /* Horses shouldn't go outside this */
+    border: 2px solid #4A7F4A; /* Darker green border */
+}
+
+.horse {
+    width: 55px; /* Adjusted */
+    height: 35px; /* Adjusted */
+    background-color: #9A6A40; /* Darker, more saturated brown for horse body */
+    position: absolute;
+    left: 10px;
+    transition: transform 0.15s linear;
+    border-radius: 30% 60% 40% 20% / 50% 50% 50% 50%; /* Organic-ish body shape */
+    border: 1px solid #5D4027; /* Darker brown border */
+    z-index: 10; /* Horse body */
+    /* Remove flex properties if number is absolutely positioned child */
+    /* display: flex; 
+    align-items: flex-end; 
+    justify-content: center; */
+}
+
+/* Horse Head (using ::after on .horse) */
+.horse::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 22px;
+    background-color: #9A6A40; /* Same as body */
+    border: 1px solid #5D4027;
+    top: -5px;  /* Position head */
+    right: -18px; /* Protrudes forward from the right edge of the horse body */
+    border-radius: 40% 60% 30% 20% / 50% 70% 30% 50%; /* Head shape */
+    transform: rotate(-10deg);
+    z-index: 11; /* Head above body for clarity, or 9 if to appear behind mane etc. */
+}
+
+/* Jockey (using ::before on .horse) - Torso & Helmet base */
+.horse::before {
+    content: '';
+    position: absolute;
+    width: 22px;  /* Jockey body width */
+    height: 28px; /* Jockey body height */
+    top: -20px;   /* Position jockey on horse's back */
+    left: 12px; /* Centered more on the body */
+    border-radius: 50% 50% 0 0 / 60% 60% 0 0; /* Helmet shape */
+    z-index: 12; /* Jockey above horse body */
+    border: 1px solid #222;
+    /* Background color will be set per player */
+}
+
+/* Jockey Number (the span itself) */
+.jockey-number {
+    position: absolute;
+    top: 10px;   /* Relative to .horse div, adjust to land on jockey */
+    left: 18px;  /* Relative to .horse div, adjust to land on jockey */ 
+    /* These values need careful tuning with the jockey's position */
+    font-size: 12px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    z-index: 15; /* Number on top of everything */
+    text-shadow: 1px 1px 1px black;
+    /* Make it small so it fits on jockey */
+    width: auto; 
+    line-height: 1; /* Compact line height */
+}
+
+/* Horse Tail (using ::before on .jockey-number span) */
+.jockey-number::before {
+    content: '';
+    position: absolute;
+    width: 30px; /* Longer tail */
+    height: 10px;
+    background-color: #6B4F2F; /* Darker brown for tail */
+    /* Position relative to the jockey-number span, which is on the horse */
+    /* This means these top/left are relative to the span's location */
+    top: 0px;   /* Adjust: try to place it from center of jockey number span towards back of horse */
+    left: -25px; /* Adjust: move it left from jockey number span to back of horse */
+    border-radius: 0 50% 50% 0;
+    transform: rotate(20deg) translate(-5px, 5px); /* Adjust angle and position */
+    z-index: 9; /* Behind horse body, but visible */
+}
+
+/* Horse Legs (suggestion - using ::after on .jockey-number span) */
+.jockey-number::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 22px; /* Front leg */
+    background-color: #B08D57; /* Lighter brown for legs, distinct from body */
+    border: 1px solid #5D4027;
+    /* Position relative to the jockey-number span */
+    top: 10px;  /* Adjust: Below horse body */
+    left: 15px;  /* Adjust: Front part of horse from number's perspective */
+    border-radius: 3px;
+    transform: rotate(15deg);
+    z-index: 9; /* Below main horse body, but above track */
+    /* Second leg (using box-shadow hack for simplicity) */
+    box-shadow: 15px 3px 0 -1px #B08D57, /* Rear leg shape slightly offset */
+                15px 3px 0 0px #5D4027; /* Rear leg border */
+}
+
+
+/* Player 1 Specific Colors */
+#horse-p1 {
+    bottom: 65%;
+    transform: translateX(0px);
+}
+#horse-p1::before { /* P1 Jockey Torso/Helmet */
+    background-color: #E53935; /* Red shirt */
+    box-shadow: inset 0px 8px 0px 0px #FFFFFF; /* White helmet part, adjust y-offset and spread */
+}
+
+
+/* Player 2 Specific Colors */
+#horse-p2 {
+    bottom: 15%;
+    transform: translateX(0px);
+}
+#horse-p2::before { /* P2 Jockey Torso/Helmet */
+    background-color: #1E88E5; /* Blue shirt */
+    box-shadow: inset 0px 8px 0px 0px #FFFFFF; /* White helmet part, adjust y-offset and spread */
+}
+
+#finish-line {
+    position: absolute;
+    right: 20px; /* Position of the finish line */
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background-color: white;
+    border-left: 2px dashed black;
+    border-right: 2px dashed black;
+} 
